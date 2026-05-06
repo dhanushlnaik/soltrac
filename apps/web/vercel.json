@@ -1,0 +1,5 @@
+{
+  "buildCommand": "cd ../.. && pnpm --filter soltrac-sdk build && pnpm --filter web build",
+  "outputDirectory": ".next",
+  "framework": "nextjs"
+}
