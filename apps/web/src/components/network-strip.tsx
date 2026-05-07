@@ -4,31 +4,21 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Activity, Zap, Gauge } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { NetworkStatus } from "@/lib/types";
-
 const CONGESTION_CONFIG = {
-  LOW: {
-    color: "text-green-400",
-    bg: "bg-green-500/10",
-    dotColor: "bg-green-400",
-    label: "Low",
-  },
-  MEDIUM: {
-    color: "text-amber-400",
-    bg: "bg-amber-500/10",
-    dotColor: "bg-amber-400",
-    label: "Moderate",
-  },
-  HIGH: {
-    color: "text-red-400",
-    bg: "bg-red-500/10",
-    dotColor: "bg-red-400",
-    label: "High",
-  },
+  LOW:      { color: "text-green-400",  dotColor: "bg-green-400",  label: "Low" },
+  MODERATE: { color: "text-amber-400",  dotColor: "bg-amber-400",  label: "Moderate" },
+  HIGH:     { color: "text-red-400",    dotColor: "bg-red-400",    label: "High" },
+  CRITICAL: { color: "text-red-500",    dotColor: "bg-red-500",    label: "Critical" },
+};
+
+type NetworkData = {
+  tps: number;
+  congestionLabel: keyof typeof CONGESTION_CONFIG;
+  feeTiers: { label: string; priorityFeeMicroLamports: number }[];
 };
 
 export default function NetworkStrip() {
-  const [status, setStatus] = useState<NetworkStatus | null>(null);
+  const [status, setStatus] = useState<NetworkData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -66,7 +56,8 @@ export default function NetworkStrip() {
 
   if (!status) return null;
 
-  const congestion = CONGESTION_CONFIG[status.congestionLevel];
+  const congestion = CONGESTION_CONFIG[status.congestionLabel] ?? CONGESTION_CONFIG.LOW;
+  const standardFee = status.feeTiers.find((t) => t.label === "standard")?.priorityFeeMicroLamports ?? 0;
 
   return (
     <motion.div
@@ -91,7 +82,7 @@ export default function NetworkStrip() {
                 className={cn(
                   "absolute inline-flex h-full w-full rounded-full opacity-75",
                   congestion.dotColor,
-                  status.congestionLevel === "HIGH" && "animate-ping"
+                  (status.congestionLabel === "HIGH" || status.congestionLabel === "CRITICAL") && "animate-ping"
                 )}
               />
               <span
@@ -110,7 +101,7 @@ export default function NetworkStrip() {
           <Activity className="h-3.5 w-3.5 text-muted-foreground" />
           <span className="text-xs text-muted-foreground">TPS:</span>
           <span className="text-xs font-medium text-foreground font-mono">
-            {status.avgTps.toLocaleString()}
+            {status.tps.toLocaleString()}
           </span>
         </div>
 
@@ -119,9 +110,7 @@ export default function NetworkStrip() {
           <Zap className="h-3.5 w-3.5 text-muted-foreground" />
           <span className="text-xs text-muted-foreground">Fee:</span>
           <span className="text-xs font-medium text-foreground font-mono">
-            {status.recommendedFee > 0
-              ? `${status.recommendedFee.toLocaleString()} μL`
-              : "Standard"}
+            {standardFee > 0 ? `${standardFee.toLocaleString()} μL` : "Standard"}
           </span>
         </div>
       </div>
