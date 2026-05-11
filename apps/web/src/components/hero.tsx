@@ -2,11 +2,29 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { ShieldCheck, Activity } from "lucide-react";
 
 export default function Hero() {
   return (
     <section className="relative flex flex-col items-center justify-center px-4 pt-24 pb-8 sm:pt-32 sm:pb-12 text-center">
+      {/* Logo */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, delay: 0.05 }}
+        className="mb-5"
+      >
+        <Image
+          src="/logo.png"
+          alt="SolTrac"
+          width={64}
+          height={64}
+          className="rounded-2xl"
+          priority
+        />
+      </motion.div>
+
       {/* Eyebrow Badge */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}

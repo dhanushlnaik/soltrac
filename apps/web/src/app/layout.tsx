@@ -33,6 +33,23 @@ export const metadata: Metadata = {
     "DeFi",
     "debugging",
   ],
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
+  openGraph: {
+    title: "SolTrac — Solana Transaction Intelligence",
+    description:
+      "Predict if a Solana transaction will fail, understand why, and get the next best action instantly.",
+    images: [{ url: "/logo.png", width: 512, height: 512 }],
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "SolTrac — Solana Transaction Intelligence",
+    description: "Know before you send. Fix before you fail.",
+    images: ["/logo.png"],
+  },
 };
 
 export default function RootLayout({
